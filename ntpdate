@@ -1,0 +1,15 @@
+#!/usr/bin/env perl
+
+# TODO: ntpserver from command line
+#	syslog
+#	timezone from configuration
+
+use Net::NTPTime;	# Note RT#80122
+use DateTime;
+
+my $time = get_unix_time('gateway.bandsman.co.uk');
+
+my $dt = DateTime->from_epoch(epoch => $time, time_zone => 'Europe/London');
+
+system('date');
+system('date ' . $dt->strftime("%m%d%H%M%Y.%S"));

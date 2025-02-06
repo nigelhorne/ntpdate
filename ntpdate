@@ -25,9 +25,22 @@ if (-e $config_file) {
 # Open syslog
 openlog('NTPTimeSync', 'pid', 'user');
 
-# Get UNIX time from NTP server
-my $time = get_unix_time($ARGV[0]);
-if(!defined $time || ($time !~ /^\d+$/)) {
+# Retry logic for fetching UNIX time
+my $time;
+my $max_retries = 3;
+my $attempts = 0;
+while($attempts < $max_retries) {
+	# Get UNIX time from NTP server
+	$time = get_unix_time($ARGV[0]);
+	if(defined($time) && ($time =~ /^\d+$/)) {
+		last;
+	}
+	$attempts++;
+	syslog('warning', "Attempt $attempts failed to retrieve valid time from NTP server");
+	sleep(2);	# Wait before retrying
+}
+
+if(!defined($time) || ($time !~ /^\d+$/)) {
 	syslog('err', 'Failed to retrieve valid time from NTP server');
 	die 'Error: Unable to get valid time from NTP server';
 }

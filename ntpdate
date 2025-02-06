@@ -1,15 +1,56 @@
 #!/usr/bin/env perl
 
-# TODO: ntpserver from command line
-#	syslog
-#	timezone from configuration
+use strict;
+use warnings;
+use autodie qw(:all);
 
 use Net::NTPTime;	# Note RT#80122
 use DateTime;
+use Sys::Syslog;
+use Config::Simple;
 
-my $time = get_unix_time('gateway.bandsman.co.uk');
+# Check for required argument
+if (@ARGV == 0) {
+	die "Usage: $0 <NTP server>";
+}
 
-my $dt = DateTime->from_epoch(epoch => $time, time_zone => 'Europe/London');
+# Load configuration for timezone
+my $config_file = 'ntpdate.cfg';
+my $timezone = 'Europe/London';	# Default
+if (-e $config_file) {
+	my $cfg = Config::Simple->new($config_file);
+	$timezone = $cfg->param('timezone') if $cfg->param('timezone');
+}
 
+# Open syslog
+openlog('NTPTimeSync', 'pid', 'user');
+
+# Get UNIX time from NTP server
+my $time = get_unix_time($ARGV[0]);
+if(!defined $time || ($time !~ /^\d+$/)) {
+	syslog('err', 'Failed to retrieve valid time from NTP server');
+	die 'Error: Unable to get valid time from NTP server';
+}
+
+# Convert to DateTime object
+my $dt;
+eval {
+	$dt = DateTime->from_epoch(epoch => $time, time_zone => $timezone);
+};
+if ($@) {
+	syslog('err', "DateTime conversion error: $@");
+	die 'Error: Invalid time conversion';
+}
+
+# Log retrieved time
+syslog('info', 'Synchronized time: ' . $dt->strftime('%Y-%m-%d %H:%M:%S %Z'));
+
+# Print current system date
 system('date');
-system('date ' . $dt->strftime("%m%d%H%M%Y.%S"));
+
+# Update system date
+my $formatted_time = $dt->strftime('%m%d%H%M%Y.%S');
+system("sudo date $formatted_time");
+
+# Close syslog
+closelog();

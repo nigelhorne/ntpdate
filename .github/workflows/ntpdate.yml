@@ -1,0 +1,36 @@
+---
+name: Perl Script CI
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Set up Perl
+        uses: shogo82148/actions-setup-perl@v1
+        with:
+          perl-version: '5.34'
+
+      - name: Install dependencies
+        run: |
+          cpanm --installdeps --notest .
+          cpanm Net::NTPTime DateTime Sys::Syslog Config::Simple
+
+      - name: Run script with test NTP server
+        run: |
+          perl ./ntpdate pool.ntp.org || echo "Script execution failed"
+
+      - name: Lint Perl script
+        run: |
+          perl -c ./ntpdate

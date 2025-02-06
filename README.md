@@ -21,10 +21,10 @@ This module is provided as-is without any warranty.
 ## Requirements
 - Perl
 - Required Perl Modules:
-  - L<Net::NTPTime>
-  - L<DateTime>
-  - L<Sys::Syslog>
-  - L<Config::Simple>
+  - `Net::NTPTime`
+  - `DateTime`
+  - `Sys::Syslog`
+  - `Config::Simple`
 - Linux-based system, or similar (for `date` command execution)
 
 ## Installation

@@ -24,7 +24,7 @@ jobs:
 
       - name: Install dependencies
         run: |
-          cpanm Net::NTPTime DateTime Sys::Syslog Config::Simple
+          cpanm Net::NTPTime DateTime Sys::Syslog Config::Simple B::Lint
 
       - name: Run script with test NTP server
         run: |
@@ -32,4 +32,5 @@ jobs:
 
       - name: Lint Perl script
         run: |
-          perl -c ./ntpdate
+          perl -MO=Lint ./ntpdate
+          perl -c -Mwarnings::unused ./ntpdate

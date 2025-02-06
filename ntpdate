@@ -16,7 +16,7 @@ if (@ARGV == 0) {
 
 # Load configuration for timezone
 my $config_file = 'ntpdate.cfg';
-my $timezone = 'Europe/London';	# Default
+my $timezone = 'America/New_York';	# Default
 if (-e $config_file) {
 	my $cfg = Config::Simple->new($config_file);
 	$timezone = $cfg->param('timezone') if $cfg->param('timezone');

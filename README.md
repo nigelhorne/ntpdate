@@ -3,6 +3,10 @@ ntpdate
 
 # NTP Time Sync Script
 
+![GitHub Workflow Status](https://img.shields.io/github/actions/workflow/status/nigelhorne/ntpdate/ci.yml?branch=main)
+![License](https://img.shields.io/github//nigelhorne/ntpdate)
+![Perl Version](https://img.shields.io/badge/perl-5.34+-blue)
+
 This Perl script synchronizes the system time with an NTP server and updates the system clock.
 Please report any bugs or feature requests to the author.
 This module is provided as-is without any warranty.

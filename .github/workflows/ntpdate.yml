@@ -1,5 +1,5 @@
 ---
-name: Perl Script CI
+name: Test ntpdate
 
 on:
   push:

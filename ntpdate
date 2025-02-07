@@ -10,7 +10,7 @@ use Sys::Syslog;
 use Config::Simple;
 
 # Check for required argument
-if (@ARGV == 0) {
+unless($ARGV[0]) {
 	die "Usage: $0 <NTP server>";
 }
 

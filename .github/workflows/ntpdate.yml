@@ -8,6 +8,8 @@ on:
     tags-ignore:
       - '*'
   pull_request:
+  schedule:
+    - cron: '0 3 * * *'  # Runs daily at 3 AM UTC
 
 jobs:
   build:
@@ -24,8 +26,8 @@ jobs:
 
       - name: Install dependencies
         run: |
-          # cpanm Net::NTPTime DateTime Sys::Syslog Config::Simple B::Lint warnings::unused
-          cpanm Net::NTPTime DateTime Sys::Syslog Config::Simple warnings::unused
+          cpanm -iqn Net::NTPTime DateTime Sys::Syslog Config::Simple B::Lint warnings::unused
+          # cpanm -iqn Net::NTPTime DateTime Sys::Syslog Config::Simple warnings::unused
 
       - name: Run script with test NTP server
         run: |
@@ -33,5 +35,5 @@ jobs:
 
       - name: Lint Perl script
         run: |
-          # perl -MO=Lint ./ntpdate
+          perl -MO=Lint ./ntpdate
           perl -c -Mwarnings::unused ./ntpdate

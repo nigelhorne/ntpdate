@@ -52,13 +52,10 @@ my $dt;
 eval {
 	$dt = DateTime->from_epoch(epoch => $time, time_zone => $timezone);
 };
-if ($@) {
+if($@) {
 	syslog('err', "DateTime conversion error: $@");
 	die 'Error: Invalid time conversion';
 }
-
-# Log retrieved time
-syslog('info', 'Synchronized time: ' . $dt->strftime('%Y-%m-%d %H:%M:%S %Z'));
 
 # Print current system date
 system('date');
@@ -69,3 +66,6 @@ system("sudo date $formatted_time");
 
 # Close syslog
 closelog();
+
+# Log retrieved time
+syslog('info', 'Synchronized time: ' . $dt->strftime('%Y-%m-%d %H:%M:%S %Z'));

@@ -61,5 +61,15 @@ This project includes a GitHub Actions workflow to:
 - If the script fails to retrieve the time, it will retry up to **3 times** before exiting with an error.
 - Logs are recorded via C<syslog> for debugging and monitoring.
 
-## License
-This project is licensed under the GPL2 Licence.
+## **Licence Agreement**
+
+### **Personal Use:**
+This program is **free to use** for a **single individual** on **one computer** for **personal, non-commercial purposes only**.
+
+### **Restricted Use:**
+Any other use—including but not limited to **commercial, charitable, educational, or government organizations**—**requires a written license agreement**.
+
+### **License Application:**
+Organizations or individuals falling outside the personal-use terms **must request written permission** and obtain a license before using this program.
+
+For licensing enquiries, please contact: **< njh @ nigelhorne.com >**.

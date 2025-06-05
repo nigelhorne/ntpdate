@@ -19,11 +19,11 @@ my $timezone = 'America/New_York';	# Default
 my $timeout = 5;	# In seconds
 my $max_retries = 3;
 
-my $config = Config::Abstraction->new();
-
-$timezone = $config->timezone() if($config->timezone());
-$timeout = $config->timeout() if($config->timeout());
-$max_retries = $config->max_retries() if($config->max_retries());
+if(my $config = Config::Abstraction->new()) {
+	$timezone = $config->timezone() if($config->timezone());
+	$timeout = $config->timeout() if($config->timeout());
+	$max_retries = $config->max_retries() if($config->max_retries());
+}
 
 # Open syslog
 openlog('NTPTimeSync', 'pid', 'user');

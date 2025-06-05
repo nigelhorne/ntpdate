@@ -1,5 +1,7 @@
 #!/usr/bin/env perl
 
+# FIXME: get the default timezone from the system
+
 use strict;
 use warnings;
 use autodie qw(:all);

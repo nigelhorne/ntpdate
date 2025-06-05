@@ -26,7 +26,7 @@ jobs:
 
       - name: Install dependencies
         run: |
-          cpanm -iqn Net::NTPTime DateTime Sys::Syslog Config::Simple B::Lint warnings::unused IPC::System::Simple
+          cpanm -iqn Net::NTPTime DateTime Sys::Syslog Config::Abstraction B::Lint warnings::unused IPC::System::Simple
           cpanm -iqn warnings::unused
 
       - name: Run script with test NTP server

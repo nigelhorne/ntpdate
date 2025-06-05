@@ -24,7 +24,7 @@ This module is provided as-is without any warranty.
   - `Net::NTPTime`
   - `DateTime`
   - `Sys::Syslog`
-  - `Config::Simple`
+  - `Config::Abstraction`
 - Linux-based system, or similar (for `date` command execution)
 
 ## Installation
@@ -36,7 +36,7 @@ cd ntpdate
 
 ### Install Dependencies
 ```sh
-cpanm Net::NTPTime DateTime Sys::Syslog Config::Simple
+cpanm Net::NTPTime DateTime Sys::Syslog Config::Abstraction
 ```
 
 ## Usage
@@ -46,7 +46,7 @@ perl ./ntpdate pool.ntp.org
 ```
 
 ## Configuration
-To change the default timezone, create a `ntpdate.cfg` file:
+To change the default timezone, create a `~/conf/ntpdate` file:
 ```ini
 timezone=America/New_York
 ```
@@ -73,3 +73,5 @@ Any other use—including but not limited to **commercial, charitable, education
 Organizations or individuals falling outside the personal-use terms **must request written permission** and obtain a license before using this program.
 
 For licensing enquiries, please contact: **< njh @ nigelhorne.com >**.
+
+This module is provided as-is without any warranty.

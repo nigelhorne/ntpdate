@@ -1,39 +1,53 @@
 #!/usr/bin/env perl
 
-# TODO:  Add support for a timeout
-
 use strict;
 use warnings;
 use autodie qw(:all);
 
-use Net::NTPTime;	# Note RT#80122
 use DateTime;
+use Net::NTPTime;	# Note RT#80122
 use Sys::Syslog;
-use Config::Simple;
+use Config::Abstraction;
 
 # Check for required argument
 unless($ARGV[0]) {
 	die "Usage: $0 <NTP server>";
 }
 
-# Load configuration for timezone
-my $config_file = 'ntpdate.cfg';
+# Load configuration
 my $timezone = 'America/New_York';	# Default
-if (-e $config_file) {
-	my $cfg = Config::Simple->new($config_file);
-	$timezone = $cfg->param('timezone') if $cfg->param('timezone');
-}
+my $timeout = 5;	# In seconds
+my $max_retries = 3;
+
+my $config = Config::Abstraction->new();
+
+$timezone = $config->timezone() if($config->timezone());
+$timeout = $config->timeout() if($config->timeout());
+$max_retries = $config->max_retries() if($config->max_retries());
 
 # Open syslog
 openlog('NTPTimeSync', 'pid', 'user');
 
 # Retry logic for fetching UNIX time
 my $time;
-my $max_retries = 3;
 my $attempts = 0;
 while($attempts < $max_retries) {
-	# Get UNIX time from NTP server
-	$time = get_unix_time($ARGV[0]);
+	eval {
+		local $SIG{ALRM} = sub { die 'timeout' };
+		# Get UNIX time from NTP server
+		alarm($timeout);
+		$time = get_unix_time($ARGV[0]);
+		alarm(0);
+	};
+	if ($@) {
+		if($@ eq 'timeout') {
+			syslog('warning', "Timeout while contacting NTP server");
+		} else {
+			syslog('warning', "Error contacting NTP server: $@");
+		}
+		$time = undef;
+	}
+
 	if(defined($time) && ($time =~ /^\d+$/)) {
 		last;
 	}

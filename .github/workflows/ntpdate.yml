@@ -1,5 +1,7 @@
 ---
 name: Test ntpdate
+permissions:
+  contents: read
 
 on:
   push:
@@ -17,7 +19,7 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Set up Perl
         uses: shogo82148/actions-setup-perl@v1

@@ -69,8 +69,9 @@ eval {
 	$dt = DateTime->from_epoch(epoch => $time, time_zone => $timezone);
 };
 if($@) {
-	syslog('err', "DateTime conversion error: $@");
-	die 'Error: Invalid time conversion';
+	my $err = $@;
+	syslog('err', "DateTime conversion error: $err");
+	die "Error: Invalid time conversion: $err";
 }
 
 # Print current system date

@@ -1,15 +1,14 @@
 #!/usr/bin/env perl
 
-# FIXME: get the default timezone from the system
-
 use strict;
 use warnings;
 use autodie qw(:all);
 
+use Config::Abstraction;
 use DateTime;
+use DateTime::TimeZone::Local;
 use Net::NTPTime;	# Note RT#80122
 use Sys::Syslog;
-use Config::Abstraction;
 
 # Check for required argument
 unless($ARGV[0]) {
@@ -17,7 +16,7 @@ unless($ARGV[0]) {
 }
 
 # Load configuration
-my $timezone = 'America/New_York';	# Default
+my $timezone = DateTime::TimeZone::Local->TimeZone()->name() || 'America/New_York';	# Default
 my $timeout = 5;	# In seconds
 my $max_retries = 3;
 

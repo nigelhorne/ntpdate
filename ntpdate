@@ -21,8 +21,7 @@ my $timeout = 5;	# In seconds
 my $max_retries = 3;
 
 if(my $config = Config::Abstraction->new()) {
-	$timezone = $config->timezone() if($config->timezone());
-	$timeout = $config->timeout() if($config->timeout());
+	$timeout = $config->timeout() if defined $config->timeout() && $config->timeout() =~ /^\d+$/;
 	$max_retries = $config->max_retries() if($config->max_retries());
 }
 
@@ -41,8 +40,8 @@ while($attempts < $max_retries) {
 		alarm(0);
 	};
 	if ($@) {
-		if($@ eq 'timeout') {
-			syslog('warning', "Timeout while contacting NTP server");
+		if($@ =~ /^timeout/) {
+			syslog('warning', 'Timeout while contacting NTP server');
 		} else {
 			syslog('warning', "Error contacting NTP server: $@");
 		}
@@ -54,10 +53,11 @@ while($attempts < $max_retries) {
 	}
 	$attempts++;
 	syslog('warning', "Attempt $attempts failed to retrieve valid time from NTP server");
-	sleep(2);	# Wait before retrying
+	sleep(2 * $attempts);	# Wait before retrying
 }
 
-if(!defined($time) || ($time !~ /^\d+$/)) {
+# Must be between 2000 and 2100
+if(defined($time) && $time =~ /^\d+$/ && $time > 946684800 && $time < 4102444800) {
 	syslog('err', 'Failed to retrieve valid time from NTP server');
 	die 'Error: Unable to get valid time from NTP server';
 }
@@ -78,10 +78,10 @@ system('date');
 
 # Update system date
 my $formatted_time = $dt->strftime('%m%d%H%M%Y.%S');
-system("sudo date $formatted_time");
-
-# Close syslog
-closelog();
+(system('sudo', 'date', $formatted_time) == 0) or die "Failed to set system time: $?";
 
 # Log retrieved time
 syslog('info', 'Synchronized time: ' . $dt->strftime('%Y-%m-%d %H:%M:%S %Z'));
+
+# Close syslog
+closelog();
